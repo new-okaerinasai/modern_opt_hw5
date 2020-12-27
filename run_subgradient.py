@@ -1,5 +1,7 @@
+import numpy as np
 import tensorflow as tf
 import tqdm
+
 
 def run_subgrad(func, x_0, proj=None, lr=1e-2, max_iter=1000):
     """
@@ -27,4 +29,3 @@ def run_subgrad(func, x_0, proj=None, lr=1e-2, max_iter=1000):
     except KeyboardInterrupt:
         print("Cancelled by user")
     return x_0, loss_history
-

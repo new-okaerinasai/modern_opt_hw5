@@ -22,14 +22,22 @@ def solve_dichotomy(func, x_max):
     x_min = 0.0
     x_star = x_max
     eps = tf.Variable(1e-6)
+    increasing = False
+    if func(x_max) > func(x_min):
+        increasing = True
     while tf.abs(x_min - x_max) > eps:
         x_star = (x_min + x_max) / 2
         y = func(x_star)
-        # print(y, x_max, x_min)
-        if y > 0:
-            x_min = x_star
+        if not increasing:
+            if y > 0:
+                x_min = x_star
+            else:
+                x_max = x_star
         else:
-            x_max = x_star
+            if y < 0:
+                x_min = x_star
+            else:
+                x_max = x_star
     return x_star
 
 

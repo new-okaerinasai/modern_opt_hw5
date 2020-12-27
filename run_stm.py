@@ -1,6 +1,7 @@
 import tensorflow as tf
 import tqdm
 
+
 def solve_xlambda(func):
     pass
 
@@ -11,9 +12,9 @@ def minimize(func, x_0, proj=None):
          with the initial point `x_0`.
         proj: callable. Function of projection on some set.
     """
-    optimizer = tf.optimizers.Adam(1)
+    optimizer = tf.optimizers.Adam(1e-2)
     loss_prev = 1e+12
-    for i in range(100):
+    for i in range(10000):
         with tf.GradientTape() as tape:
             tape.watch(x_0)
             loss = func(x_0)
@@ -24,7 +25,7 @@ def minimize(func, x_0, proj=None):
         if tf.abs(loss - loss_prev) < 1e-5 * loss:
             break
         loss_prev = loss
-    return x_0
+    return x_0, i
 
 
 def run_stm(func, proj_func, x0, max_iter=10000, L_m=1.):
@@ -41,12 +42,14 @@ def run_stm(func, proj_func, x0, max_iter=10000, L_m=1.):
                 res = func(y_k)
             grad_k = tape.gradient(res, y_k)
             grad_history.append(grad_k)
-            minimizee = lambda v: tf.tensordot(sum((i + 1) / 2 * grad_history[i] for i in range(len(grad_history))), v - x0,
+            minimizee = lambda v: tf.tensordot(sum((i + 1) / 2 * grad_history[i] for i in range(len(grad_history))),
+                                               v - x0,
                                                1) + L_m * tf.linalg.norm(v - x0)
             v_0 = tf.Variable(tf.nn.relu(v_k + tf.random.normal(shape=v_k.shape)))
-            v_k = minimize(minimizee, v_0, proj_func)
+            v_k, i = minimize(minimizee, v_0, proj_func)
             x_k = (k / (k + 2)) * x_k + (2 / (k + 2)) * v_k
-            progress_bar.set_description("Loss_value = {:.4f}".format(func(x_k).numpy()))
+            progress_bar.set_description(
+                "Loss_value = {:.4f}, number of convergence iterations = {}".format(func(x_k).numpy(), i))
             # print(tf.reduce_sum(tf.math.log(x_k)))
             loss_history.append(func(x_k).numpy())
     except KeyboardInterrupt:

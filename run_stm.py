@@ -50,7 +50,6 @@ def run_stm(func, proj_func, x0, max_iter=10000, L_m=1.):
             x_k = (k / (k + 2)) * x_k + (2 / (k + 2)) * v_k
             progress_bar.set_description(
                 "Loss_value = {:.4f}, number of convergence iterations = {}".format(func(x_k).numpy(), i))
-            # print(tf.reduce_sum(tf.math.log(x_k)))
             loss_history.append(func(x_k).numpy())
     except KeyboardInterrupt:
         print("Cancelled by user")

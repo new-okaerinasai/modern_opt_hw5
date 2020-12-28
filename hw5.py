@@ -13,9 +13,9 @@ tf.random.set_seed(121)
 mu = 0.01
 n = 50
 m = 10
-A = tf.abs(tf.random.normal((n, m), 2, 3))
+A = tf.nn.relu(tf.random.normal((n, m), 2, 3))
 lr = 1e-1
-x0 = tf.abs(tf.random.normal(shape=(m,)) / np.sqrt(m))
+x0 = tf.nn.relu(tf.random.normal(shape=(m,)))
 
 
 def plot(loss_history, title, fname):
@@ -25,7 +25,7 @@ def plot(loss_history, title, fname):
     plt.title(title)
     plt.xlabel("iteration")
     plt.ylabel("loss - loss_min, log-log-scale")
-    plt.yscale("log")
+    # plt.yscale("log")
     plt.plot(loss_history)
     plt.savefig(fname)
 
@@ -46,4 +46,4 @@ def exp_subgrad():
 
 
 if __name__ == "__main__":
-    xmin2 = exp_subgrad()
+    xmin2 = exp_stm()
